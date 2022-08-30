@@ -49,6 +49,7 @@ RSpec.describe 'Merchants API' do
   end
 end
 
+
   # it 'can create a new merchant' do
   #   merc_params = ({
   #     name: Faker::Name.name

@@ -59,4 +59,41 @@ RSpec.describe 'items API' do
     expect(created.name).to eq(item_params[:name])
     expect(created.description).to eq(item_params[:description])
   end
+
+  it 'can update an item' do
+    id = create(:item).id
+    old_name = Item.last.name
+    old_desc = Item.last.description
+    old_price = Item.last.unit_price
+
+    item_params = {
+      name: 'new name who dis',
+      description: 'asdlkjsakl jj dalksj kdska jlsddsda s',
+      unit_price: 29.99,
+    }
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
+    item = Item.find(id)
+
+    expect(response.status).to eq(200)
+    expect(item.name).to_not eq(old_name)
+    expect(item.name).to eq('new name who dis')
+
+    expect(item.description).to_not eq(old_desc)
+    expect(item.description).to eq('asdlkjsakl jj dalksj kdska jlsddsda s')
+
+    expect(item.unit_price).to_not eq(old_price)
+    expect(item.unit_price).to eq(29.99)
+  end
+
+  it 'can delete an item' do
+    item = create(:item)
+
+    expect(Item.count).to eq(1)
+
+    expect{delete "/api/v1/items/#{item.id}"}.to change(Item, :count).by(-1)
+
+    expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
 end
