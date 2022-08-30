@@ -6,6 +6,9 @@ RSpec.describe 'Merchants API' do
 
     get '/api/v1/merchants'
 
+    binding.pry
+
     expect(response).to be_successful
+    expect(response.status).to eq(200)
   end
 end
