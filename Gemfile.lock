@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/faker-ruby/faker.git
-  revision: 4b17b5c2e576c47ac6f7821b81f4c5529fc03a13
+  revision: d113aabf335ca0bbea2223a8136c2161b7f43659
   branch: master
   specs:
     faker (2.22.0)
@@ -71,6 +71,8 @@ GEM
       activesupport (>= 5.0)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
+    jsonapi-serializer (2.2.0)
+      activesupport (>= 4.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -172,6 +174,7 @@ DEPENDENCIES
   byebug
   factory_bot_rails
   faker!
+  jsonapi-serializer
   listen (>= 3.0.5, < 3.2)
   pg (>= 0.18, < 2.0)
   pry
