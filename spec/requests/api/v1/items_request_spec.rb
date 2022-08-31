@@ -60,6 +60,19 @@ RSpec.describe 'items API' do
     expect(created.description).to eq(item_params[:description])
   end
 
+  # it 'sad path renders 404 if invalid params for create' do
+  #   item_params = ({
+  #     name: nil,
+  #     description: nil,
+  #     unit_price: nil
+  #   })
+  #   headers = {"CONTENT_TYPE" => "application/json"}
+    
+  #   post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+
+  #   expect(response.status).to eq(400)
+  # end
+
   it 'can update an item' do
     id = create(:item).id
     old_name = Item.last.name
@@ -93,7 +106,19 @@ RSpec.describe 'items API' do
     expect(Item.count).to eq(1)
 
     expect{delete "/api/v1/items/#{item.id}"}.to change(Item, :count).by(-1)
-
     expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it 'can get an items merchant' do
+    merchant = create_list(:merchant, 1).first
+    merchant.items = create_list(:item, 1)
+    item = merchant.items.first
+
+    get "/api/v1/items/#{item.id}/merchant"
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    found = parsed_json[:data]
+
+    expect(found[:id].to_i).to eq(merchant.id)
+    expect(found[:attributes][:name]).to eq(merchant.name)
   end
 end
