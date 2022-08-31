@@ -38,9 +38,17 @@ RSpec.describe 'Merchants API' do
     expect(merchant[:attributes][:name]).to be_a(String)
   end
 
+  it 'will not find merchant with invalid id' do
+    get "/api/v1/merchants/L"
+
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    expect(response.status).to eq(404)
+    expect(response.body).to include("Couldn't find Merchant with 'id'=L")
+  end
+
   it 'can get a merchants items' do
     merchant = create_list(:merchant, 1).first
-    merchant.items = create_list(:item, 3)
+    merchant.items = create_list(:item, 3, merchant_id: merchant.id)
 
     get "/api/v1/merchants/#{merchant.id}/items"
     

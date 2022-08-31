@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  belongs_to :merchant
+  # belongs_to :merchant
   
   def self.search(name)
     where("name ILIKE ?", "%#{name}%")

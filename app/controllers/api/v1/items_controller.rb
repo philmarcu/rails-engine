@@ -23,7 +23,6 @@ class Api::V1::ItemsController < ApplicationController
     if item.save
       render json: ItemSerializer.new(item), status: 201
     else
-      render not_found_404
     end
   end
 
@@ -33,7 +32,6 @@ class Api::V1::ItemsController < ApplicationController
       item.update!(item_params)
       render json: ItemSerializer.new(item), status: 200
     else
-      render not_found_404
     end
   end
 
