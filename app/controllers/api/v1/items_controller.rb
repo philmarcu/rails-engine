@@ -4,6 +4,12 @@ class Api::V1::ItemsController < ApplicationController
     render json: ItemSerializer.new(merchant.items)
   end
 
+  def merchant
+    item = Item.find(params[:item_id])
+    merchant = Merchant.find(item.merchant_id)
+    render json: MerchantSerializer.new(merchant)
+  end
+
   def index
     render json: ItemSerializer.new(Item.all)
   end
@@ -17,7 +23,7 @@ class Api::V1::ItemsController < ApplicationController
     if item.save
       render json: ItemSerializer.new(item), status: 201
     else
-      render status: 404
+      render not_found_404
     end
   end
 
@@ -27,12 +33,12 @@ class Api::V1::ItemsController < ApplicationController
       item.update!(item_params)
       render json: ItemSerializer.new(item), status: 200
     else
-      render status: 404
+      render not_found_404
     end
   end
 
   def destroy
-    render json: Item.destroy(params[:id])
+    render json: Item.destroy(params[:id]) # must delete invoices as well
   end
 
   private

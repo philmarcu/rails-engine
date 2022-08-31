@@ -15,6 +15,8 @@ RSpec.describe 'Merchants API' do
     expect(merchants.size).to eq(3)
 
     merchants.each do |m|
+      expect(m).to be_a(Hash)
+      expect(m.size).to eq(3)
       expect(m).to have_key(:id)
       expect(m[:id]).to be_a(String)
       
@@ -47,19 +49,32 @@ RSpec.describe 'Merchants API' do
 
     expect(items.count).to eq(3)
   end
-end
 
+  it 'can search for merchant by name' do
+    merchants = create_list(:merchant, 20)
+    query = 'A'
 
-  # it 'can create a new merchant' do
-  #   merc_params = ({
-  #     name: Faker::Name.name
-  #   })
-  #   headers = {"CONTENT_TYPE" => "application/json"}
+    get "/api/v1/merchants/find?name=#{query}"
 
-  #   post "/api/v1/merchants", headers: headers, params: JSON.generate(merchant: merc_params)
-  #   created_merc = Merchant.last
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    found = parsed_json[:data]
 
-  #   expect(response).to be_successful
-  #   expect(response.status).to eq(201)
-  #   expect(created_merc.name).to eq(merc_params[:name])
+    expect(response).to be_successful
+    expect(found).to be_a(Hash)
+    expect(found.size).to eq(3)
+    expect(found).to have_key(:attributes)
+    expect(found[:attributes][:name].downcase).to include(query.downcase)
+  end
+
+  # it 'sad path- returns an error message if no merchants found' do
+  #   merchants = create_list(:merchant, 20)
+  #   query = "?!?!"
+
+  #   get "/api/v1/merchants/find?name=#{query}"
+  #   parsed_json = JSON.parse(response.body, symbolize_names: true)
+
+  #   results = parsed_json[:data]
+    
+  #   expect(results).to eq(nil)
   # end
+end

@@ -1,5 +1,4 @@
 class Api::V1::MerchantsController < ApplicationController
-
   def index
     render json: MerchantSerializer.new(Merchant.all)
   end
@@ -7,17 +6,13 @@ class Api::V1::MerchantsController < ApplicationController
   def show
     render json: MerchantSerializer.new(Merchant.find(params[:id]))
   end
+
+  def find
+    if params[:name]
+      found = Merchant.search(params[:name])
+      first = found.first
+      render json: MerchantSerializer.new(first)
+    else
+    end
+  end
 end
-
-  # def create
-  #   merchant = Merchant.new(merc_params)
-  #   if merchant.save
-  #     render json: MerchantSerializer.new(merchant), status: 201
-  #   end
-  # end
-  
-  # private
-
-  # def merc_params
-  #   params.require(:merchant).permit(:name)
-  # end
