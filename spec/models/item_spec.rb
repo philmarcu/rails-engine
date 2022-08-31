@@ -4,6 +4,7 @@ RSpec.describe Item, type: :model do
   describe ".class methods" do
     it 'can search for merchants where name is similar' do
       m = Merchant.create!(name: "Bob")
+      
       item_1 = m.items.create!(name: "bob", description: "an item!", unit_price: 2.00)
       item_2 = m.items.create!(name: "Dale", description: "an item!", unit_price: 2.00)
       item_3 = m.items.create!(name: "Jill", description: "an item!", unit_price: 2.00)
