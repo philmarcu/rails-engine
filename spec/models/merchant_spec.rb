@@ -12,4 +12,13 @@ RSpec.describe Merchant, type: :model do
       expect(Merchant.search("j")).to eq([merchant_3, merchant_4, merchant_5])
     end
   end
+
+  describe '#instance methods' do
+    it 'can tell if id is valid or not' do
+      merchant_1 = Merchant.create!(name: "bob")
+      merchant_2 = Merchant.create!(name: "Dale")
+      
+      expect(merchant_1.valid).to eq(true)
+    end
+  end
 end

@@ -43,6 +43,14 @@ RSpec.describe 'items API' do
     expect(item[:attributes][:unit_price]).to be_a(Float)
   end
 
+  it 'sad path- will not find item with invalid id' do
+    get "/api/v1/items/L"
+
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    expect(response.status).to eq(404)
+    expect(response.body).to include("Couldn't find Item with 'id'=L")
+  end
+
   it 'can create a new item' do
     item_params = ({
       name: Faker::Appliance.equipment, 
@@ -60,18 +68,16 @@ RSpec.describe 'items API' do
     expect(created.description).to eq(item_params[:description])
   end
 
-  # it 'sad path renders 404 if invalid params for create' do
-  #   item_params = ({
-  #     name: nil,
-  #     description: nil,
-  #     unit_price: nil
-  #   })
-  #   headers = {"CONTENT_TYPE" => "application/json"}
+  it 'sad path renders 204 if invalid params for create' do
+    item_params = ({
+      name: "bobby",
+      unit_price: 209.00
+    })
+    headers = {"CONTENT_TYPE" => "application/json"}
     
-  #   post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
-
-  #   expect(response.status).to eq(400)
-  # end
+    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+    expect(response.status).to eq(204)
+  end
 
   it 'can update an item' do
     merchant = create_list(:merchant, 1).first
@@ -102,6 +108,21 @@ RSpec.describe 'items API' do
     expect(item.unit_price).to eq(29.99)
   end
 
+  it 'sad path- will not update if invalid merchant_id' do
+    id = create(:item).id
+    item_params = {
+      name: 'new name who dis',
+      description: 'asdlkjsakl jj dalksj kdska jlsddsda s',
+      unit_price: 29.99,
+      merchant_id: 505050
+    }
+    headers = {"CONTENT_TYPE" => "application/json"}
+    patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
+
+    expect(response.status).to eq(404)
+    expect(response.body).to include("Couldn't find Merchant without an ID")
+  end
+
   it 'can delete an item' do
     item = create(:item)
 
@@ -122,5 +143,23 @@ RSpec.describe 'items API' do
 
     expect(found[:id].to_i).to eq(merchant.id)
     expect(found[:attributes][:name]).to eq(merchant.name)
+  end
+
+  it 'can search for many items by name' do
+    items = create_list(:item, 20)
+    query = 'an'
+
+    get "/api/v1/items/find_all?name=#{query}"
+
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    found = parsed_json[:data]
+    result = found.first
+    name = result[:attributes][:name].downcase
+
+    expect(response).to be_successful
+    expect(found).to be_a(Array)
+    expect(found.size).to_not eq(20)
+    expect(result).to be_a(Hash)
+    expect(name).to include(query.downcase)
   end
 end

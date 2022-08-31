@@ -8,4 +8,8 @@ class ApplicationController < ActionController::API
   # def not_found_404
   #   render status: 404
   # end
+
+  # def error_message(errors)
+  #   errors.full_messages.join(', ')
+  # end
 end
