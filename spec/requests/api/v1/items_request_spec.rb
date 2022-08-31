@@ -74,7 +74,9 @@ RSpec.describe 'items API' do
   # end
 
   it 'can update an item' do
-    id = create(:item).id
+    merchant = create_list(:merchant, 1).first
+    merchant.items = create_list(:item, 1)
+    id = merchant.items.first.id
     old_name = Item.last.name
     old_desc = Item.last.description
     old_price = Item.last.unit_price
