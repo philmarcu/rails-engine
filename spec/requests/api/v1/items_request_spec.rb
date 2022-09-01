@@ -45,7 +45,7 @@ RSpec.describe 'items API' do
     expect(item[:attributes][:unit_price]).to be_a(Float)
   end
 
-  it 'sad path- will not find item with invalid id' do
+  it 'sad path- will not find specific item with invalid id' do
     get "/api/v1/items/L"
 
     parsed_json = JSON.parse(response.body, symbolize_names: true)
@@ -101,7 +101,7 @@ RSpec.describe 'items API' do
     patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
     item = Item.find(id)
 
-    expect(response.status).to eq(200)
+    expect(response.status).to eq(201)
     expect(item.name).to_not eq(old_name)
     expect(item.name).to eq('new name who dis')
 
@@ -123,8 +123,9 @@ RSpec.describe 'items API' do
     headers = {"CONTENT_TYPE" => "application/json"}
     patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
 
-    expect(response.status).to eq(422)
-    expect(response.body).to include("Validation failed: Merchant must exist")
+    expect(response.status).to eq(404)
+    # --- old expect for old update action --- #
+    # expect(response.body).to include("Validation failed: Merchant must exist")
   end
 
   it 'can delete an item' do
@@ -166,6 +167,15 @@ RSpec.describe 'items API' do
     expect(found.size).to_not eq(20)
     expect(result).to be_a(Hash)
     expect(name).to include(query.downcase)
+  end
+
+  it 'sad path- will not return items if search is blank' do
+    items = create_list(:item, 20, merchant_id: m.id)
+    query = ''
+
+    get "/api/v1/items/find_all?name=#{query}"
+
+    expect(response.status).to eq(400)
   end
 
   it 'can search for an item by price' do

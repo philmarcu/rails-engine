@@ -1,7 +1,11 @@
 class Api::V1::ItemSearchController < ApplicationController
   def find_all
-    found = Item.search(params[:name])
-    json_response(ItemSerializer.new(found))
+    if !params[:name].empty?
+      found = Item.search(params[:name])
+      json_response(ItemSerializer.new(found))
+    else
+      render status: 400
+    end
   end
 
   def find
@@ -14,8 +18,3 @@ class Api::V1::ItemSearchController < ApplicationController
     end
   end
 end
-
-# def range
-#   items = Item.range(params[:min_price], params[:max_price])
-#   json_response(ItemSerializer.new(items))
-# end

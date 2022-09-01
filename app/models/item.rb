@@ -1,8 +1,10 @@
 class Item < ApplicationRecord
-  belongs_to :merchant
   validates :name, presence: true
   validates :description, presence: true
   validates :unit_price, numericality: true
+  belongs_to :merchant
+  has_many :invoice_items
+  has_many :invoices, through: :invoice_items
   
   def self.search(name)
     where("name ILIKE ?", "%#{name}%")

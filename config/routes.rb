@@ -3,9 +3,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do 
       get '/merchants/find', to: 'merchant_search#find'
+      get '/merchants/find_all', to: 'merchant_search#find_all'
+
       get '/items/find_all', to: 'item_search#find_all'
       get '/items/find', to: 'item_search#find'
-      # get 'items/range', to: 'item_search#range'
 
       resources :merchants do
         get '/items', to: 'merchants#items'

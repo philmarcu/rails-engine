@@ -85,4 +85,41 @@ RSpec.describe 'Merchants API' do
     expect(results).to be_a(Hash)
     expect(results.blank?).to eq(true)
   end
+
+  it 'sad path- will not return a merchant if search is blank' do
+    merchants = create_list(:merchant, 20)
+    query = ''
+
+    get "/api/v1/merchants/find?name=#{query}"
+
+    expect(response.status).to eq(400)
+  end
+
+  it 'can search for many merchants by name' do
+    merchants = create_list(:merchant, 20)
+    query = 'la'
+
+    get "/api/v1/merchants/find_all?name=#{query}"
+
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    found = parsed_json[:data]
+
+    result = found.first
+    name = result[:attributes][:name].downcase
+
+    expect(response).to be_successful
+    expect(found).to be_a(Array)
+    expect(found.size).to_not eq(20)
+    expect(result).to be_a(Hash)
+    expect(name).to include(query.downcase)
+  end
+
+  it 'sad path- will not return merchants if search is blank' do
+    merchants = create_list(:merchant, 20)
+    query = ''
+
+    get "/api/v1/merchants/find_all?name=#{query}"
+
+    expect(response.status).to eq(400)
+  end
 end
