@@ -38,9 +38,16 @@ RSpec.describe 'Merchants API' do
     expect(merchant[:attributes][:name]).to be_a(String)
   end
 
+  it 'sad path- will not find merchant with invalid id' do
+    get "/api/v1/merchants/L"
+
+    expect(response.status).to eq(404)
+    expect(response.body).to include("Couldn't find Merchant with 'id'=L")
+  end
+
   it 'can get a merchants items' do
     merchant = create_list(:merchant, 1).first
-    merchant.items = create_list(:item, 3)
+    merchant.items = create_list(:item, 3, merchant_id: merchant.id)
 
     get "/api/v1/merchants/#{merchant.id}/items"
     
@@ -66,15 +73,16 @@ RSpec.describe 'Merchants API' do
     expect(found[:attributes][:name].downcase).to include(query.downcase)
   end
 
-  # it 'sad path- returns an error message if no merchants found' do
-  #   merchants = create_list(:merchant, 20)
-  #   query = "?!?!"
+  it 'sad path- returns an error message if no merchants found' do
+    merchants = create_list(:merchant, 20)
+    query = "?!?!"
 
-  #   get "/api/v1/merchants/find?name=#{query}"
-  #   parsed_json = JSON.parse(response.body, symbolize_names: true)
+    get "/api/v1/merchants/find?name=#{query}", params: {}
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    results = parsed_json[:data]
 
-  #   results = parsed_json[:data]
-    
-  #   expect(results).to eq(nil)
-  # end
+    expect(response.body).to eq("{\"data\":{}}")
+    expect(results).to be_a(Hash)
+    expect(results.blank?).to eq(true)
+  end
 end

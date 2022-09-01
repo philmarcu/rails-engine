@@ -1,18 +1,14 @@
 class Api::V1::MerchantsController < ApplicationController
   def index
-    render json: MerchantSerializer.new(Merchant.all)
+    json_response(MerchantSerializer.new(Merchant.all))
   end
 
   def show
-    render json: MerchantSerializer.new(Merchant.find(params[:id]))
+    json_response(MerchantSerializer.new(Merchant.find(params[:id])))
   end
 
-  def find
-    if params[:name]
-      found = Merchant.search(params[:name])
-      first = found.first
-      render json: MerchantSerializer.new(first)
-    else
-    end
+  def items
+    merchant = Merchant.find(params[:merchant_id])
+    json_response(ItemSerializer.new(merchant.items))
   end
 end
