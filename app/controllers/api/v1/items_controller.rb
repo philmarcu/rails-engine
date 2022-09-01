@@ -22,19 +22,29 @@ class Api::V1::ItemsController < ApplicationController
 
   def update
     item = Item.find(params[:id])
-    merchant = Merchant.find(item.merchant_id)
-    if item.save && merchant.valid
-      item.update!(item_params)
-      json_response(ItemSerializer.new(item))
+    if item.update(item_params)
+      render json: ItemSerializer.new(Item.find(params[:id])), status: 201
+    else
+      render status: 404
     end
   end
-
+  
   def destroy
     json_response(Item.destroy(params[:id])) # must delete invoices as well
   end
-
+  
   private
   def item_params
     params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
   end
 end
+
+# --- old update action --- #
+
+# merchant = Merchant.find(item.merchant_id)
+# if item.save && merchant.valid
+#   item.update!(item_params)
+#   render json: ItemSerializer.new(Item.find(params[:id])), status: 201
+# else 
+#   render status: 404
+# end
