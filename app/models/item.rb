@@ -7,4 +7,8 @@ class Item < ApplicationRecord
   def self.search(name)
     where("name ILIKE ?", "%#{name}%")
   end
+
+  def self.price(price)
+    where("unit_price >= ?", price)
+  end
 end

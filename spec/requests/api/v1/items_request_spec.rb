@@ -114,7 +114,7 @@ RSpec.describe 'items API' do
       name: 'new name who dis',
       description: 'asdlkjsakl jj dalksj kdska jlsddsda s',
       unit_price: 29.99,
-      merchant_id: 505050
+      merchant_id: 999999999999
     }
     headers = {"CONTENT_TYPE" => "application/json"}
     patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
@@ -161,5 +161,22 @@ RSpec.describe 'items API' do
     expect(found.size).to_not eq(20)
     expect(result).to be_a(Hash)
     expect(name).to include(query.downcase)
+  end
+
+  it 'can search for an item by price' do
+    items = create_list(:item, 20)
+    price = 1000.00
+
+    get "/api/v1/items/find?min_price=#{price}"
+
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    found = parsed_json[:data]
+    result = found.first
+    item_price = result[:attributes][:unit_price]
+    
+    expect(found).to be_a(Array)
+    expect(found.size).to_not eq(20)
+    expect(result).to be_a(Hash)
+    expect(item_price).to be >= price
   end
 end

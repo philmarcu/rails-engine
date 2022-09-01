@@ -1,4 +1,4 @@
-class Api::V1::MerchantsSearchController < ApplicationController
+class Api::V1::MerchantSearchController < ApplicationController
   def find
     found = Merchant.search(params[:name])
     if !found.blank?

@@ -23,12 +23,9 @@ class Api::V1::ItemsController < ApplicationController
   def update
     item = Item.find(params[:id])
     merchant = Merchant.find(item.merchant_id)
-
     if item.save && merchant.valid
       item.update!(item_params)
       json_response(ItemSerializer.new(item))
-    else
-      render status: 404
     end
   end
 
