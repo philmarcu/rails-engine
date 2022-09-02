@@ -12,5 +12,4 @@ module ExceptionHandler
   end
 end
 
-
-# ----- line 10 is needed for validation expect in item#update sad path test
+# ----- line 10 is needed for validation expect in item#update sad path test (line 127-129)

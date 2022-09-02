@@ -178,7 +178,7 @@ RSpec.describe 'items API' do
     expect(response.status).to eq(400)
   end
 
-  it 'can search for an item by price' do
+  it 'can search for an item by min price' do
     items = create_list(:item, 20, merchant_id: m.id)
     price = 1000.00
 
@@ -193,6 +193,23 @@ RSpec.describe 'items API' do
     expect(found.size).to_not eq(20)
     expect(result).to be_a(Hash)
     expect(item_price).to be >= price
+  end
+
+  it 'can search for an item by max price' do
+    items = create_list(:item, 20, merchant_id: m.id)
+    price = 400.00
+
+    get "/api/v1/items/find?max_price=#{price}"
+
+    parsed_json = JSON.parse(response.body, symbolize_names: true)
+    found = parsed_json[:data]
+    result = found.first
+    item_price = result[:attributes][:unit_price]
+    
+    expect(found).to be_a(Array)
+    expect(found.size).to_not eq(20)
+    expect(result).to be_a(Hash)
+    expect(item_price).to be <= price
   end
 
   it 'can get items in a price range' do

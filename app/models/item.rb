@@ -14,6 +14,10 @@ class Item < ApplicationRecord
     where("unit_price >= ?", price)
   end
 
+  def self.mx_price(price)
+    where("unit_price <= ?", price)
+  end
+
   def self.range(min, max)
     where("unit_price >=?", min).where("unit_price <=?", max)
   end

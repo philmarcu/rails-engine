@@ -2,7 +2,7 @@ class Api::V1::MerchantSearchController < ApplicationController
   def find
     found = Merchant.search(params[:name])
     if params[:name].empty?
-      render status: 400
+      bad_request_400
     elsif !found.blank?
       first = found.first
       json_response(MerchantSerializer.new(first))
@@ -16,7 +16,7 @@ class Api::V1::MerchantSearchController < ApplicationController
       found = Merchant.search(params[:name])
       json_response(MerchantSerializer.new(found))
     else
-      render status: 400
+      bad_request_400
     end
   end
 end
