@@ -8,8 +8,4 @@ class Merchant < ApplicationRecord
   def self.search(name)
     where("name ILIKE ?", "%#{name}%")
   end
-
-  def valid
-    self.id.present?
-  end
 end
