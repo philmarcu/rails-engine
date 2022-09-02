@@ -97,7 +97,7 @@ RSpec.describe 'Merchants API' do
 
   it 'can search for many merchants by name' do
     merchants = create_list(:merchant, 20)
-    query = 'la'
+    query = 'a'
 
     get "/api/v1/merchants/find_all?name=#{query}"
 

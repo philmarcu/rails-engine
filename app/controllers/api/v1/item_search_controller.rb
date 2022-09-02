@@ -4,17 +4,22 @@ class Api::V1::ItemSearchController < ApplicationController
       found = Item.search(params[:name])
       json_response(ItemSerializer.new(found))
     else
-      render status: 400
+      bad_request_400
     end
   end
 
   def find
-    if params[:max_price].present?
+    min = params[:min_price]
+    max = params[:max_price]
+    if max.present? && min.present?
       found = Item.range(params[:min_price], params[:max_price])
       json_response(ItemSerializer.new(found))
+    elsif min.present?
+      min_found = Item.price(params[:min_price])
+      json_response(ItemSerializer.new(min_found))
     else
-      items = Item.price(params[:min_price])
-      json_response(ItemSerializer.new(items))
+      max_found = Item.mx_price(params[:max_price])
+      json_response(ItemSerializer.new(max_found))
     end
   end
 end
